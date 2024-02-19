@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Login } from '../../models/login.model';
 import { LoginService } from '../../services/login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -19,7 +20,7 @@ export class RegisterComponent {
     password: ''
   };
 
-  constructor(private loginService: LoginService) { }
+  constructor(private loginService: LoginService, private router: Router) { }
 
   onSubmit(event: Event): void {
     event.preventDefault();
@@ -38,10 +39,11 @@ export class RegisterComponent {
 
       this.loginService.register(this.loginData.email, this.loginData.password).subscribe({
         next: (response) => {
-          console.log('Login erfolgreich', response);
+          this.loginService.setToken(response.token);
+          this.router.navigate(['/']);
         },
         error: (error) => {
-          this.errorMessage = (error.error && error.error.message) ? error.error.message : "Unbekannter Fehler";
+          this.errorMessage = (error.error && error.error.message) ? error.error.message : "Unknown error";
           this.registerError = true;
         }
       });

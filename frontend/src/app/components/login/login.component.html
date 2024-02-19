@@ -19,7 +19,7 @@
             <form (ngSubmit)="onSubmit($event)">
               <div class="mb-3">
                 <label for="emailInput" class="form-label">Email</label>
-                <input type="email"   class="form-control" id="emailInput" [(ngModel)]="loginData.email" name="email">
+                <input type="email"   autocomplete=“true” spellcheck=“true”  class="form-control" id="emailInput" [(ngModel)]="loginData.email" name="email">
               </div>
               <div class="mb-3">
                 <label for="passwordInput" class="form-label">Password</label>
