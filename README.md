@@ -46,3 +46,7 @@ npm run start
 This command compiles the application and starts a development server. You can access the frontend of the app by navigating to `http://localhost:4200` in your web browser.
 
 
+## App Preview
+
+https://stuff.s3-de-central.profitbricks.com/appflow.mp4
+
