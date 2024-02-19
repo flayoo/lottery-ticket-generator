@@ -1,0 +1,82 @@
+.lotto {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+  width: calc((30px + 4px) * 7);
+  margin: auto;
+
+}
+
+.slot {
+  flex: 0 0 calc(100% / 7 - 4px);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2px;
+}
+
+.outer-container {
+  display: inline-block;
+  background-color: beige;
+  padding: 10px;
+  margin: 5px;
+  transition: transform 0.4s ease-in-out;
+  border-radius: 10px;
+  position: relative;
+}
+
+
+.outer-container:hover {
+  border: 2px solid #b22222;
+  transform: scale(1.1);
+  z-index: 9999;
+  -webkit-box-shadow: 5px 5px 19px 5px rgba(0,0,0,0.63);
+  box-shadow: 5px 5px 19px 5px rgba(0,0,0,0.63);
+}
+
+.slot label {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  border-radius: 4px;
+  font-weight: bold;
+  justify-content: center;
+  align-items: center;
+  color: #b22222;
+  border: 1px solid #b22222;
+  cursor: pointer;
+}
+
+
+.active.slot label::before, .active.slot label::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 70%;
+  background-color: darkblue;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.5s ease;
+}
+
+.active.slot label::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.active.slot label::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.active.slot label:hover::before {
+  transform: translate(-50%, -50%) rotate(135deg);
+}
+
+.active.slot label:hover::after {
+  transform: translate(-50%, -50%) rotate(-135deg);
+}
+
+
+

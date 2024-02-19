@@ -1,0 +1,135 @@
+<div>
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light  p-4">
+    <a class="navbar-brand" href="#" routerLink="/">Lottery</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item d-flex align-items-center px-3">
+          <button type="button" class="btn btn-light btn-sm" routerLink="/">Add ticket</button>
+        </li>
+        <li class="nav-item d-flex align-items-center px-3">
+          <button type="button" class="btn btn-light btn-sm" routerLink="/list">My tickets</button>
+        </li>
+        <li class="nav-item d-flex align-items-center px-3">
+          <button type="button" class="btn btn-light btn-sm" (click)="logout()">Logout</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="alert alert-danger" role="alert" *ngIf="error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!processing">
+    <div class="container mt-5 ">
+      <h2>{{ headline }}</h2>
+      <select class="form-control" *ngIf="listMode && !emptyTicketList" (change)="onSelectionChange($event)">
+        <option *ngFor="let item of ticketList; let i = index" [value]="item.id">Ticket #{{item.id}} // Fields:
+          {{item.fields.length}} </option>
+      </select>
+    </div>
+
+    <div class="container mt-5 ">
+      <div class="container mb-5">
+        <div *ngIf="showFields">
+          <div class="row justify-content-end mb-5">
+            <div class="col-sm-auto">
+              <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                <button type="button" class="btn btn-success" (click)="createTicket()" *ngIf="!listMode"><fa-icon
+                    [icon]="faFloppyDisk" class="fa-icon-btn"></fa-icon> Save Ticket</button>
+                <button type="button" class="btn btn-outline-secondary" (click)="openSettingsModal()"
+                  *ngIf="!listMode">Settings</button>
+                <div ngbDropdown class="d-inline-block">
+                  <button class="btn btn-outline-secondary" id="dropdownBasic1" ngbDropdownToggle>Actions</button>
+                  <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                    <button ngbDropdownItem (click)="openNumberFrequenciesModal()">Number Frequencies</button>
+                    <button ngbDropdownItem (click)="generateNumbers()" *ngIf="!listMode">Generate new field
+                      numbers</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="showSuperzahl">
+            <div class="slot-superzahl pb-4">Superzahl: <span>{{ticket.superzahl}}</span><fa-icon [icon]="faRotateRight"
+                class="fa-icon" (click)="generateSuperzahl()" *ngIf="!listMode"></fa-icon></div>
+          </div>
+
+          <app-lottery-field *ngFor="let item of ticket.fields; let i = index" [field]="item" />
+        </div>
+
+        <div class="alert alert-info" role="alert" *ngIf="emptyTicketList">
+          Your ticket list is empty.
+        </div>
+
+        <!-- Modal -->
+        <ng-template #settingsModal let-modal>
+          <div class="modal-header">
+            <h4 class="modal-title">Settings
+            </h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="submitFormSettings()">
+              <div class="form-group mb-4">
+                <label for="anzahl">Number of fields</label>
+                <input type="number" min="1" max="99" class="form-control" id="numberFields" [(ngModel)]="numberFields"
+                  name="numberFields">
+              </div>
+              <div class="form-group form-check mb-4">
+                <input type="checkbox" class="form-check-input" id="showSuperzahl" [(ngModel)]="showSuperzahl"
+                  name="showSuperzahl">
+                <label class="form-check-label" for="showSuperzahl">Superzahl</label>
+              </div>
+              <button type="submit" class="btn btn-primary">Change ticket settings</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-dark" (click)="modal.close('Close click')">Close</button>
+          </div>
+        </ng-template>
+
+        <!-- Modal -->
+        <ng-template #frequenciesModal let-modal>
+          <div class="modal-header">
+            <h4 class="modal-title">Number Frequencies ({{ticket.fields.length}} field{{ticket.fields.length > 1 ? "s" :
+              ""}})
+            </h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col"># Number</th>
+                    <th scope="col">Frequency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let number of getNumberFrequenciesKeys()">
+                    <td>{{ number }}</td>
+                    <td>{{ numberFrequencies[number] }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-dark" (click)="modal.close('Close click')">Close</button>
+          </div>
+        </ng-template>
+      </div>
+
+    </div>
+  </div>

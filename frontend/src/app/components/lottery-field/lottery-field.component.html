@@ -1,0 +1,8 @@
+<div class="outer-container ">
+  <div class="lotto">
+    <div *ngFor="let number of getNumbers(); let i = index" [ngClass]="{'active': field?.includes(number)}"
+      class="slot">
+      <label [for]="'i' + number">{{ number }}</label>
+    </div>
+  </div>
+</div>

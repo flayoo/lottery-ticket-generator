@@ -1,0 +1,31 @@
+.slot-superzahl {
+  font-family: 'Kalam', cursive;
+  font-weight: 600;
+  font-size: 1.4rem;
+
+  span {
+    background-color: #f5f5dc;
+    padding: 4px 14px;
+    color: #b22222;
+    border-radius: 8px;
+  }
+
+  .fa-icon {
+    margin-left: 20px;
+    cursor: pointer;
+  }
+
+  .fa-icon:hover {
+    color: #b22222;
+  }
+}
+
+.fa-icon-btn {
+  margin-right: 5px;
+}
+
+.navbar-brand {
+  font-family: 'Kalam', cursive;
+  font-weight: 600;
+  font-size: 2rem;
+}
