@@ -1,32 +1,40 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Ticket } from '../models/ticket.model';
 import { LoginService } from './login.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LotteryService {
 
+  #http = inject(HttpClient)
+  #loginService  = inject(LoginService)
+
   private apiBaseUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient, private loginService : LoginService) { }
+  constructor() { }
 
-  generateLottoFields(n: number): number[][] {
-    let lottoFields: number[][] = [];
-    let attempts = 0;
+  generateLottoFields(n: number): Observable<number[][]> {
+    return of(null).pipe(
+      map(() => {
+        let lottoFields: number[][] = [];
+        let attempts = 0;
 
-    while (lottoFields.length < n && attempts < 1000) {
-      const newField = this.generateUniqueLottoField();
-      if (!this.fieldExists(lottoFields, newField)) {
-        lottoFields.push(newField);
-      }
-      attempts++;
-    }
+        while (lottoFields.length < n && attempts < 1000) {
+          const newField = this.generateUniqueLottoField();
+          if (!this.fieldExists(lottoFields, newField)) {
+            lottoFields.push(newField);
+          }
+          attempts++;
+        }
 
-    return lottoFields;
+        return lottoFields;
+      })
+    );
   }
 
   private generateUniqueLottoField(): number[] {
@@ -44,18 +52,22 @@ export class LotteryService {
     );
   }
 
-  countNumberFrequencies(lottoFields: number[][]): { [key: number]: number } {
-    const frequencies: { [key: number]: number } = {};
+  countNumberFrequencies(lottoFields: number[][]): Observable<{ [key: number]: number }> {
+    return of(lottoFields).pipe(
+      map(fields => {
+        const frequencies: { [key: number]: number } = {};
 
-    lottoFields.flat().forEach(number => {
-      if (frequencies[number]) {
-        frequencies[number]++;
-      } else {
-        frequencies[number] = 1;
-      }
-    });
+        fields.flat().forEach(number => {
+          if (frequencies[number]) {
+            frequencies[number]++;
+          } else {
+            frequencies[number] = 1;
+          }
+        });
 
-    return frequencies;
+        return frequencies;
+      })
+    );
   }
 
   generateRandomNumber(max = 9, currentNumber = -1) {
@@ -67,24 +79,24 @@ export class LotteryService {
   }
 
   createTicket(ticket: Ticket): Observable<any> {
-    const token = this.loginService.getToken();
+    const token = this.#loginService.getToken();
     const url = `${this.apiBaseUrl}/ticket`;
     const httpOptions = {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${token}`
       })
     };
-    return this.http.post(url, { ticket }, httpOptions);
+    return this.#http.post(url, { ticket }, httpOptions);
   }
 
   loadTickets() {
-    const token = this.loginService.getToken();
+    const token = this.#loginService.getToken();
     const url = `${this.apiBaseUrl}/tickets`;
     const httpOptions = {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${token}`
       })
     };
-    return this.http.get(url, httpOptions);
+    return this.#http.get(url, httpOptions);
   }
 }

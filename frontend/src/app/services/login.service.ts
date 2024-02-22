@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -9,20 +9,22 @@ import { Login } from '../models/login.model';
 })
 export class LoginService {
 
+  #http = inject(HttpClient)
+
   private apiBaseUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor() { }
 
   login(email: string, password: string): Observable<any> {
     const url = `${this.apiBaseUrl}/login`;
     const credentials = { email, password };
-    return this.http.post(url, credentials);
+    return this.#http.post(url, credentials);
   }
 
   register(email: string, password: string): Observable<any> {
     const Url = `${this.apiBaseUrl}/register`;
     const credentials = { email, password };
-    return this.http.post(Url, credentials);
+    return this.#http.post(Url, credentials);
   }
 
   checkLogin(token: string): Observable<any> {
@@ -32,7 +34,7 @@ export class LoginService {
         'Authorization': `Bearer ${token}`
       })
     };
-    return this.http.get(url, httpOptions);
+    return this.#http.get(url, httpOptions);
   }
 
   validateForm(loginData : Login) {

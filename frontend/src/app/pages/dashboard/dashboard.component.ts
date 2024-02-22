@@ -6,7 +6,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Ticket } from '../../models/ticket.model';
 
 import { faRotateRight, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Mode } from '../../enum/mode';
 
 @Component({
@@ -23,8 +24,11 @@ export class DashboardComponent implements OnInit {
   #route = inject(ActivatedRoute)
   #loginService = inject(LoginService)
 
+  // ----------------------------------------------------------------
 
   private routeSub: Subscription | undefined;
+  private destroy$ = new Subject<void>();
+
   faRotateRight = faRotateRight;
   faFloppyDisk = faFloppyDisk;
   numberFrequencies: { [key: number]: number } = {};
@@ -91,8 +95,16 @@ export class DashboardComponent implements OnInit {
   }
 
   generateNumbers(): void {
-    this.ticket.fields = this.#lotteryService.generateLottoFields(this.numberFields);
-    this.numberFrequencies = this.#lotteryService.countNumberFrequencies(this.ticket.fields);
+    this.#lotteryService.generateLottoFields(this.numberFields)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(fields => {
+        this.ticket.fields = fields;
+        this.#lotteryService.countNumberFrequencies(fields)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(frequencies => {
+            this.numberFrequencies = frequencies;
+          });
+      });
   }
 
   openNumberFrequenciesModal() {
@@ -164,6 +176,12 @@ export class DashboardComponent implements OnInit {
         this.showSuperzahl = ticket.hasSuperzahl
       }
     }
+  }
+
+  ngOnDestroy(): void {
+    // Cancel all active subscriptions
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }
