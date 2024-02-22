@@ -16,7 +16,7 @@ jest.mock('../db', () => ({
     all: jest.fn(),
 }));
 
-describe('createTicket', () => {
+describe('authorisation', () => {
     let mockRequest: Partial<Request>;
     let mockResponse: Partial<Response>;
     let mockStatus: jest.Mock;

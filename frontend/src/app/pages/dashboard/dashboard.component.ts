@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { LotteryService } from '../../services/lottery.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoginService } from '../../services/login.service';
@@ -16,6 +16,13 @@ import { Mode } from '../../enum/mode';
 })
 
 export class DashboardComponent implements OnInit {
+
+  #lotteryService = inject(LotteryService)
+  #modalService = inject(NgbModal)
+  #router = inject(Router)
+  #route = inject(ActivatedRoute)
+  #loginService = inject(LoginService)
+
 
   private routeSub: Subscription | undefined;
   faRotateRight = faRotateRight;
@@ -40,16 +47,12 @@ export class DashboardComponent implements OnInit {
     id: 0
   };
 
-  constructor(private lotteryService: LotteryService,
-    private modalService: NgbModal,
-    private router: Router,
-    private route: ActivatedRoute,
-    private loginService: LoginService) {
+  constructor() {
     this.generateNumbers()
   }
 
   ngOnInit() {
-    this.routeSub = this.route.params.subscribe(async params => {
+    this.routeSub = this.#route.params.subscribe(async params => {
       const category = params['cat'];
       if (category) {
         if (category == 'list') {
@@ -84,20 +87,20 @@ export class DashboardComponent implements OnInit {
   }
 
   generateSuperzahl(): void {
-    this.ticket.superzahl = this.lotteryService.generateRandomNumber(9, this.ticket.superzahl);
+    this.ticket.superzahl = this.#lotteryService.generateRandomNumber(9, this.ticket.superzahl);
   }
 
   generateNumbers(): void {
-    this.ticket.fields = this.lotteryService.generateLottoFields(this.numberFields);
-    this.numberFrequencies = this.lotteryService.countNumberFrequencies(this.ticket.fields);
+    this.ticket.fields = this.#lotteryService.generateLottoFields(this.numberFields);
+    this.numberFrequencies = this.#lotteryService.countNumberFrequencies(this.ticket.fields);
   }
 
   openNumberFrequenciesModal() {
-    this.modalService.open(this.frequenciesModal, { size: 'lg' });
+    this.#modalService.open(this.frequenciesModal, { size: 'lg' });
   }
 
   openSettingsModal() {
-    this.modalService.open(this.settingsModal, { size: 'lg' });
+    this.#modalService.open(this.settingsModal, { size: 'lg' });
   }
 
   submitFormSettings() {
@@ -106,18 +109,18 @@ export class DashboardComponent implements OnInit {
       this.generateSuperzahl()
     }
     this.generateNumbers()
-    this.modalService.dismissAll()
+    this.#modalService.dismissAll()
   }
 
   logout() {
-    this.loginService.logout();
-    this.router.navigate(['/login']);
+    this.#loginService.logout();
+    this.#router.navigate(['/login']);
   }
 
   loadTickets() {
     this.processing = true
     this.error = false
-    this.lotteryService.loadTickets().subscribe({
+    this.#lotteryService.loadTickets().subscribe({
       next: (response) => {
         this.processing = false
         this.ticketList = response as Ticket[];
@@ -137,10 +140,10 @@ export class DashboardComponent implements OnInit {
   createTicket() {
     this.ticket.hasSuperzahl = this.showSuperzahl;
 
-    this.lotteryService.createTicket((this.ticket)).subscribe({
+    this.#lotteryService.createTicket((this.ticket)).subscribe({
       next: (response) => {
         console.log('Ticket saved', response);
-        this.router.navigate(['/list']);
+        this.#router.navigate(['/list']);
       },
       error: (error) => {
         this.errorMessage = 'Error saving ticket'

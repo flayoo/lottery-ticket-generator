@@ -20,53 +20,70 @@
       </ul>
     </div>
   </nav>
-
-  <div class="alert alert-danger" role="alert" *ngIf="error">
+  @if(error) {
+  <div class="alert alert-danger" role="alert">
     {{ errorMessage }}
   </div>
+  }
 
-  <div *ngIf="!processing">
+  @if(!processing) {
+  <div>
     <div class="container mt-5 ">
       <h2>{{ headline }}</h2>
-      <select class="form-control" *ngIf="listMode && !emptyTicketList" (change)="onSelectionChange($event)">
-        <option *ngFor="let item of ticketList; let i = index" [value]="item.id">Ticket #{{item.id}} // Fields:
+      @if(listMode && !emptyTicketList) {
+      <select class="form-control"  (change)="onSelectionChange($event)">
+        @for(item of ticketList; track item.id; let i = $index) {
+        <option [value]="item.id">Ticket #{{item.id}} // Fields:
           {{item.fields.length}} </option>
+        }
       </select>
+      }
     </div>
-
     <div class="container mt-5 ">
       <div class="container mb-5">
-        <div *ngIf="showFields">
+        @if(showFields) {
+        <div>
           <div class="row justify-content-end mb-5">
             <div class="col-sm-auto">
               <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                <button type="button" class="btn btn-success" (click)="createTicket()" *ngIf="!listMode"><fa-icon
+                @if(!listMode) {
+                <button type="button" class="btn btn-success" (click)="createTicket()"><fa-icon
                     [icon]="faFloppyDisk" class="fa-icon-btn"></fa-icon> Save Ticket</button>
                 <button type="button" class="btn btn-outline-secondary" (click)="openSettingsModal()"
-                  *ngIf="!listMode">Settings</button>
+                 >Settings</button>
+                }
                 <div ngbDropdown class="d-inline-block">
                   <button class="btn btn-outline-secondary" id="dropdownBasic1" ngbDropdownToggle>Actions</button>
                   <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
                     <button ngbDropdownItem (click)="openNumberFrequenciesModal()">Number Frequencies</button>
-                    <button ngbDropdownItem (click)="generateNumbers()" *ngIf="!listMode">Generate new field
+                    @if(!listMode) {
+                    <button ngbDropdownItem (click)="generateNumbers()">Generate new field
                       numbers</button>
+                    }
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div *ngIf="showSuperzahl">
-            <div class="slot-superzahl pb-4">Superzahl: <span>{{ticket.superzahl}}</span><fa-icon [icon]="faRotateRight"
-                class="fa-icon" (click)="generateSuperzahl()" *ngIf="!listMode"></fa-icon></div>
+          @if(showSuperzahl) {
+          <div>
+            <div class="slot-superzahl pb-4">Superzahl: <span>{{ticket.superzahl}}</span>
+              @if(!listMode) {
+              <fa-icon [icon]="faRotateRight" class="fa-icon" (click)="generateSuperzahl()"></fa-icon>
+              }
+            </div>
           </div>
-
-          <app-lottery-field *ngFor="let item of ticket.fields; let i = index" [field]="item" />
+          }
+          @for(item of ticket.fields; track item; let i = $index) {
+          <app-lottery-field  [field]="item" />
+          }
         </div>
-
-        <div class="alert alert-info" role="alert" *ngIf="emptyTicketList">
+        }
+        @if(emptyTicketList) {
+        <div class="alert alert-info" role="alert">
           Your ticket list is empty.
         </div>
+        }
 
         <!-- Modal -->
         <ng-template #settingsModal let-modal>
@@ -117,10 +134,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let number of getNumberFrequenciesKeys()">
+                  @for(number of getNumberFrequenciesKeys(); track number; let i = $index) {
+                  <tr >
                     <td>{{ number }}</td>
                     <td>{{ numberFrequencies[number] }}</td>
                   </tr>
+                  }
                 </tbody>
               </table>
             </div>
@@ -133,3 +152,6 @@
 
     </div>
   </div>
+  }
+
+</div>

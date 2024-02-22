@@ -7,15 +7,21 @@
             Register
           </div>
           <div class="card-body">
-            <div class="alert alert-danger" role="alert" *ngIf="emailInvalid">
+            @if(emailInvalid) {
+            <div class="alert alert-danger" role="alert">
               Please enter a valid e-mail address.
             </div>
-            <div class="alert alert-danger" role="alert" *ngIf="passwordInvalid">
+            }
+            @if(passwordInvalid) {
+            <div class="alert alert-danger" role="alert" >
               The password must have at least 5 characters.
             </div>
-            <div class="alert alert-danger" role="alert" *ngIf="registerError">
+            }
+            @if(registerError) {
+            <div class="alert alert-danger" role="alert">
               {{ errorMessage }}
             </div>
+            }
             <form (ngSubmit)="onSubmit($event)">
               <div class="mb-3">
                 <label for="emailInput" class="form-label">Email</label>

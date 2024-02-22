@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Login } from '../../models/login.model';
 import { LoginService } from '../../services/login.service';
 import { Router } from '@angular/router';
@@ -10,6 +10,11 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
+  #loginService = inject(LoginService);
+  #router = inject(Router);
+
+  // ----------------------------------------------------------------
+
   loginError = false;
   emailInvalid = false;
   passwordInvalid = false;
@@ -20,7 +25,7 @@ export class LoginComponent {
     password: ''
   };
 
-  constructor(private loginService: LoginService, private router: Router) { }
+  constructor() { }
 
   onSubmit(event: Event): void {
     event.preventDefault();
@@ -30,17 +35,17 @@ export class LoginComponent {
     this.passwordInvalid = false;
     this.errorMessage = "";
 
-    const validationForm = this.loginService.validateForm(this.loginData);
+    const validationForm = this.#loginService.validateForm(this.loginData);
 
     this.emailInvalid = validationForm.emailInvalid
     this.passwordInvalid = validationForm.passwordInvalid
 
     if (!this.emailInvalid && !this.passwordInvalid) {
 
-      this.loginService.login(this.loginData.email, this.loginData.password).subscribe({
+      this.#loginService.login(this.loginData.email, this.loginData.password).subscribe({
         next: (response) => {
-          this.loginService.setToken(response.token);
-          this.router.navigate(['/']);
+          this.#loginService.setToken(response.token);
+          this.#router.navigate(['/']);
         },
         error: (error) => {
           this.errorMessage = (error.error && error.error.message) ? error.error.message : "Unknown error";

@@ -7,23 +7,30 @@
             Login
           </div>
           <div class="card-body">
-            <div class="alert alert-danger" role="alert" *ngIf="emailInvalid">
+            @if(emailInvalid) {
+            <div class="alert alert-danger" role="alert" >
               Please enter a valid e-mail address.
             </div>
-            <div class="alert alert-danger" role="alert" *ngIf="passwordInvalid">
+            }
+            @if(passwordInvalid) {
+            <div class="alert alert-danger" role="alert">
               The password must have at least 5 characters.
             </div>
-            <div class="alert alert-danger" role="alert" *ngIf="loginError">
+            }
+            @if(loginError) {
+            <div class="alert alert-danger" role="alert">
               {{ errorMessage }}
             </div>
+            }
             <form (ngSubmit)="onSubmit($event)">
               <div class="mb-3">
                 <label for="emailInput" class="form-label">Email</label>
-                <input type="email"   autocomplete=“true” spellcheck=“true”  class="form-control" id="emailInput" [(ngModel)]="loginData.email" name="email">
+                <input type="email" autocomplete=“true” spellcheck=“true” class="form-control" id="emailInput"
+                  [(ngModel)]="loginData.email" name="email">
               </div>
               <div class="mb-3">
                 <label for="passwordInput" class="form-label">Password</label>
-                <input type="password"   class="form-control" id="passwordInput" [(ngModel)]="loginData.password"
+                <input type="password" class="form-control" id="passwordInput" [(ngModel)]="loginData.password"
                   name="password">
               </div>
               <div class="d-flex justify-content-between">
